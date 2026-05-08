@@ -1,0 +1,23 @@
+{
+  "name": "@package-core/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests"
+  },
+  "dependencies": {
+    "better-auth": "catalog:",
+    "@package-db/app": "workspace:*"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "bun-types": "1.3.10",
+    "typescript": "5.9.2"
+  }
+}

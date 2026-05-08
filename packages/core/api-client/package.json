@@ -1,0 +1,22 @@
+{
+  "name": "@package-core/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests"
+  },
+  "dependencies": {
+    "@elysiajs/eden": "catalog:",
+    "elysia": "catalog:"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "typescript": "5.9.2"
+  }
+}

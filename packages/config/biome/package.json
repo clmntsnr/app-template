@@ -1,0 +1,8 @@
+{
+  "name": "@package-config/biome",
+  "version": "0.0.0",
+  "private": true,
+  "files": [
+    "biome.base.json"
+  ]
+}
