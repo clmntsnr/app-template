@@ -87,10 +87,14 @@ packages/
     biome/           # @package-config/biome — shared biome.json
     tailwind/        # @package-config/tailwind
   core/
-    db/              # @package-core/db — Drizzle schema, client, migrations
+    db/              # @package-core/db — generic Drizzle helpers (createDb, types)
     auth/            # @package-core/auth — Better Auth setup
     api-client/      # @package-core/api-client — Eden client wrapper
     schemas/         # @package-core/schemas — shared TypeBox schemas
+  db/
+    app/             # @package-db/app — primary DB schema + client instance
+    analytics/       # @package-db/analytics — analytics DB schema + client
+    <name>/          # one folder per logical database
   features/
     billing/         # @package-features/billing — domain module
     <feature>/       # one folder per bounded domain
@@ -104,7 +108,8 @@ packages/
 
 - **`ui/`** — visual primitives, components, theming. Anything React/Tailwind that renders.
 - **`config/`** — shared tool configs consumed by apps and packages (tsconfig, biome, tailwind).
-- **`core/`** — cross-feature platform: db, auth, schemas, generated clients. Used by most apps.
+- **`core/`** — cross-feature platform: shared utilities, auth, schemas, generated clients. Used by most apps.
+- **`db/`** — one package per logical database. Each package owns its schema, its drizzle-kit config, its migrations, and exports a typed client built from `@package-core/db`'s `createDb` helper. A second DB (analytics, audit log, vector store) is a sibling package, never an extra schema file inside `db/app`. This keeps connection strings, migration history, and type inference cleanly separated per DB.
 - **`features/`** — bounded domain modules (billing, notifications, organizations…). Each owns its routes, schemas, db tables, UI surfaces. Apps compose features.
 - **`utils/`** — small, pure, dependency-light helpers. No framework imports. If it needs React or the DB, it doesn't belong here.
 

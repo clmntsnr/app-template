@@ -4,6 +4,20 @@ The canonical stack for this template. Every choice below is opinionated: type-s
 
 ---
 
+## Core Principle: Stay on the Bleeding Edge
+
+**Always use the latest stable major of every dependency.** No exceptions without a written reason in the PR description.
+
+- **Why:** This template is a starting point — anything we ship locks downstream apps into our choices. Picking the newest major means we inherit modern architecture (Tailwind v4's Oxide engine, Vite's Rolldown, React 19's compiler-friendly APIs) instead of paying for a migration six months in. Old majors accumulate footguns; new majors fix them.
+- **What this means in practice:**
+  - Bump **catalogs in the root `package.json`** whenever a major drops. Prefer the breaking-change migration over staying behind.
+  - Track ecosystem signal: if a tool ships a v-next (Tailwind v4, Vite 8, TypeScript 6, React 19), assume we adopt it within the same release cycle.
+  - Pin to exact versions (no `^`, no `~`) so upgrades are explicit, reviewable diffs — not silent drift.
+  - When two libraries gate each other (e.g. a plugin lags its host), take the host's latest and find a maintained replacement for the lagging plugin (we did this when moving from `tailwindcss-animate` → `tw-animate-css` for Tailwind v4).
+- **Acceptable reasons to lag:** a hard incompatibility with a load-bearing dependency, or a known regression that breaks production. Both must be called out in the catalog with a `// TODO: bump to vX once Y` comment.
+
+---
+
 ## Runtime & Tooling
 
 ### Bun
@@ -48,6 +62,7 @@ The canonical stack for this template. Every choice below is opinionated: type-s
 ### TanStack Table
 - **Scope:** Headless table primitives.
 - **Why:** Headless = full control over markup/styling (pairs with shadcn). Sorting, filtering, pagination, virtualization, column resizing — all type-safe over your row shape.
+- **Version:** v9 (alpha). The headless contract is preserved; ownership of breaking changes during alpha is expected — pin exact versions and treat upgrades as code-touching.
 - **Used for:** Any non-trivial data grid.
 
 ### TanStack Form
@@ -75,9 +90,10 @@ The canonical stack for this template. Every choice below is opinionated: type-s
 - **Note:** Use the **Base UI** variants (not Radix). Base UI is the successor maintained by the original Radix team — better accessibility primitives, cleaner composition API, more permissive styling hooks.
 - **Used for:** Every interactive UI primitive.
 
-### Tailwind CSS
+### Tailwind CSS (v4)
 - **Scope:** Utility-first styling.
-- **Why:** Default styling layer for shadcn. Co-locates style with markup, no CSS-in-JS runtime cost.
+- **Why:** Default styling layer for shadcn. Co-locates style with markup, no CSS-in-JS runtime cost. **v4 is mandatory** — the new Oxide engine is an order of magnitude faster, config lives in CSS (`@theme`) instead of `tailwind.config.{js,ts}`, and the first-party `@tailwindcss/vite` plugin replaces the PostCSS pipeline. No more `postcss.config` / `autoprefixer` — Tailwind handles vendor prefixing internally.
+- **Animations:** Use `tw-animate-css` (v4-native). The legacy `tailwindcss-animate` plugin does not work with v4.
 - **Used for:** All styling.
 
 ---
@@ -91,6 +107,7 @@ The canonical stack for this template. Every choice below is opinionated: type-s
 
 ### Effect
 - **Scope:** Strategic — **not** the default for every function.
+- **Version:** 4.x (currently beta). The 4.x API is more compositional than 3.x; consult the migration guide before introducing Effect into a new module, and don't mix idioms across files.
 - **Why:** Excellent for **dependency injection** (Layer/Context), **interface contracts**, and **typed error channels**. The error-as-value model removes the "what can this throw" guessing game.
 - **When to use:**
   - Service boundaries (database, external APIs, queues) — declare as `Effect.Service` with a typed interface and inject via Layer.
@@ -154,11 +171,14 @@ Pick **one** per project and stick with it. Default below.
   - **Schema in TypeScript** — tables, indexes, relations, constraints all declared in TS. Single source of truth, diffable, refactor-friendly.
   - **drizzle-kit** — generates migrations from schema diffs, supports introspection of existing DBs, has a Studio GUI.
   - **Pairs with TypeBox/Elysia** — schema → TypeBox via `drizzle-typebox`. End-to-end types from Postgres column to React component, no codegen.
+  - **Native Effect support (v1+)** — Drizzle 1.0 ships first-class Effect integration (the `effect-validator` work merged into the 1.0 line), so modules that already commit to Effect can validate at the DB boundary without a third-party adapter.
+- **Version:** Drizzle ORM and drizzle-kit are pinned to the **1.0 RC** line. `drizzle({ client })` is the v1 constructor — schema is no longer threaded through the client; pass `relations()` if you use the relational query builder.
 - **Used for:** All database access. No raw drivers, no Prisma, no Kysely.
 
 ### drizzle-typebox
 - **Scope:** Generates TypeBox schemas directly from Drizzle table definitions (`createSelectSchema`, `createInsertSchema`, `createUpdateSchema`).
 - **Why:** Closes the type chain. The Drizzle table is already the single source of truth for the database shape — `drizzle-typebox` makes it the source of truth for API validation too. One schema definition flows: **Postgres column → Drizzle table → TypeBox schema → Elysia route validator → Eden client type → React component prop**. No drift, no codegen, no duplicate definitions.
+- **Version:** While the Drizzle 1.0 line is in RC, `drizzle-typebox` only publishes prerelease commit-tagged 1.0 betas (no clean RC tag yet). Pin to a specific `1.0.0-beta.N-<sha>` build that pairs with the Drizzle ORM RC; revisit once an RC is cut. The `createSelectSchema`/`createInsertSchema` API is stable across the 1.0 betas.
 - **Used for:** Every Elysia route that reads or writes a DB entity. Compose generated schemas with `Type.Pick`/`Type.Omit`/`Type.Partial` rather than redefining shapes by hand.
 
 ### Alternatives considered
