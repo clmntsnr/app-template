@@ -42,34 +42,34 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "catalog:",
+    "class-variance-authority": "catalog:styling",
+    "clsx": "catalog:styling",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "1.4.2",
-    "lucide-react": "^1.14.0",
+    "lucide-react": "catalog:icons",
     "next-themes": "^0.4.6",
     "react-day-picker": "9.14.0",
     "react-hook-form": "^7.75.0",
     "react-resizable-panels": "2.1.7",
     "recharts": "2.15.4",
     "sonner": "^2.0.7",
-    "tailwind-merge": "catalog:",
-    "tailwindcss-animate": "catalog:",
+    "tailwind-merge": "catalog:styling",
+    "tw-animate-css": "catalog:styling",
     "vaul": "^1.1.2",
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "tailwindcss": "catalog:"
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "tailwindcss": "catalog:styling"
   },
   "devDependencies": {
     "@package-config/typescript": "workspace:*",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "tailwindcss": "catalog:",
-    "typescript": "5.9.2"
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "tailwindcss": "catalog:styling",
+    "typescript": "catalog:build"
   }
 }

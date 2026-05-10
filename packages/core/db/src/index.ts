@@ -1,14 +1,12 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-export type Schema = Record<string, unknown>;
-
-export function createDb<S extends Schema>(connectionString: string, schema: S) {
+export function createDb(connectionString: string) {
   const client = postgres(connectionString);
-  return drizzle(client, { schema });
+  return drizzle({ client });
 }
 
-export type DrizzleClient<S extends Schema> = ReturnType<typeof createDb<S>>;
+export type DrizzleClient = ReturnType<typeof createDb>;
 
 export * as orm from "drizzle-orm";
 export * as pg from "drizzle-orm/pg-core";

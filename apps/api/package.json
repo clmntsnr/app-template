@@ -1,0 +1,27 @@
+{
+  "name": "api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --target=bun --outdir=dist",
+    "start": "bun run dist/index.js",
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests"
+  },
+  "dependencies": {
+    "elysia": "catalog:backend",
+    "@sinclair/typebox": "catalog:build",
+    "@package-db/app": "workspace:*",
+    "@package-db/analytics": "workspace:*",
+    "@package-core/auth": "workspace:*",
+    "@package-core/schemas": "workspace:*"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "bun-types": "catalog:build",
+    "typescript": "catalog:build"
+  }
+}

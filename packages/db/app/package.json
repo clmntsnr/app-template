@@ -17,12 +17,12 @@
   },
   "dependencies": {
     "@package-core/db": "workspace:*",
-    "drizzle-orm": "catalog:"
+    "drizzle-orm": "catalog:database"
   },
   "devDependencies": {
     "@package-config/typescript": "workspace:*",
-    "bun-types": "1.3.10",
-    "drizzle-kit": "catalog:",
-    "typescript": "5.9.2"
+    "bun-types": "catalog:build",
+    "drizzle-kit": "catalog:database",
+    "typescript": "catalog:build"
   }
 }

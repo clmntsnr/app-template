@@ -1,0 +1,4 @@
+{
+  "extends": "@package-config/typescript/bun.json",
+  "include": ["src/**/*"]
+}

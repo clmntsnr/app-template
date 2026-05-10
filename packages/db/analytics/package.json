@@ -1,0 +1,28 @@
+{
+  "name": "@package-db/analytics",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
+  },
+  "dependencies": {
+    "@package-core/db": "workspace:*",
+    "drizzle-orm": "catalog:database"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "bun-types": "catalog:build",
+    "drizzle-kit": "catalog:database",
+    "typescript": "catalog:build"
+  }
+}

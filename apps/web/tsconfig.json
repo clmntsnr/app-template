@@ -1,0 +1,13 @@
+{
+  "extends": "@package-config/typescript/react.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
+    "types": ["vite/client"],
+    "paths": {
+      "~/*": ["./src/*"],
+      "@/*": ["../../packages/ui/shadcn/src/*"]
+    }
+  },
+  "include": ["src/**/*", "vite.config.ts"]
+}

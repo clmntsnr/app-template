@@ -12,11 +12,11 @@
     "test": "bun test --pass-with-no-tests"
   },
   "dependencies": {
-    "@elysiajs/eden": "catalog:",
-    "elysia": "catalog:"
+    "@elysiajs/eden": "catalog:backend",
+    "elysia": "catalog:backend"
   },
   "devDependencies": {
     "@package-config/typescript": "workspace:*",
-    "typescript": "5.9.2"
+    "typescript": "catalog:build"
   }
 }
