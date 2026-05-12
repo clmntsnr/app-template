@@ -125,12 +125,23 @@ The canonical stack for this template. Every choice below is opinionated: type-s
 
 ---
 
-## Native / Desktop
+## Native / Desktop & Mobile
+
+The web stack (TanStack Start + shadcn + Tailwind) ships to three targets from one codebase: web (Vite), desktop (Electrobun), mobile (Capacitor). Electrobun and Capacitor are complementary, not alternatives — pick one or both depending on which surfaces the product needs.
 
 ### Electrobun
-- **Scope:** Native desktop app shell powered by Bun.
+- **Scope:** Native desktop app shell powered by Bun (macOS / Windows / Linux).
 - **Why:** Replacement for Electron — uses the OS webview (no bundled Chromium → tiny binaries), Bun runtime on the main process, native menus and tray. Same web stack, native distribution.
 - **Used for:** Desktop builds of the web app.
+
+### Capacitor (v8)
+- **Scope:** Native mobile runtime — wraps the Vite build in an iOS/Android container, exposes native APIs (camera, push, filesystem, biometrics, geolocation, haptics) through a typed JS bridge. PWA fallback comes for free.
+- **Why:** Ships mobile from the same web codebase — no parallel React Native UI tree, no second component library. Plugin architecture covers most native needs; you only drop to Swift/Kotlin for bespoke modules. Pairs cleanly with Electrobun: both wrap the same `vite build` output.
+- **Used for:** iOS and Android builds of the web app.
+- **Not chosen:**
+  - **React Native / Expo** — different rendering model forces a parallel UI codebase. Defeats the "one web stack everywhere" principle. Only worth it for gesture-heavy 60fps native UI.
+  - **Tauri Mobile** — Rust toolchain, still maturing on mobile, smaller plugin ecosystem.
+  - **Ionic UI kit** — overlaps with shadcn. Take Capacitor (the runtime), skip the Ionic component library.
 
 ---
 
@@ -207,6 +218,7 @@ Pick **one** per project and stick with it. Default below.
 - **Express/Hono** — Elysia is faster on Bun and has better type inference via Eden.
 - **NextAuth/Auth.js** — Better Auth owns its schema and is easier to extend.
 - **Electron** — Electrobun is the Bun-native replacement.
+- **React Native / Expo** — Capacitor keeps the web codebase unified across web/desktop/mobile.
 - **Redux/Zustand for server data** — TanStack Query covers it.
 - **Prisma** — Drizzle gives equal DX with no engine binary, faster runtime, and transparent SQL.
 - **Zod (as default)** — TypeBox is native to Elysia and serializes to JSON Schema; Zod stays as a fallback only when a third-party lib forces it.
