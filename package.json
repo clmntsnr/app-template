@@ -5,6 +5,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:tanstack-spa": "turbo run dev --filter=example-tanstack-spa",
+    "dev:corgi-tracker": "turbo run dev --filter=example-corgi-tracker",
     "lint": "turbo run lint",
     "format": "biome format --write .",
     "check": "biome check --write .",
@@ -24,6 +26,7 @@
   "workspaces": {
     "packages": [
       "apps/*",
+      "examples/*",
       "packages/*/*"
     ],
     "catalogs": {
@@ -41,7 +44,12 @@
         "@tanstack/react-form": "1.30.0",
         "@tanstack/react-virtual": "3.13.24",
         "@tanstack/pacer": "0.21.0",
-        "@tanstack/router-plugin": "1.167.35"
+        "@tanstack/router-plugin": "1.167.35",
+        "@tanstack/react-db": "0.1.83",
+        "@tanstack/db": "0.6.5",
+        "@tanstack/query-db-collection": "1.0.36",
+        "@tanstack/react-query-devtools": "5.100.9",
+        "@tanstack/react-router-devtools": "1.166.13"
       },
       "backend": {
         "elysia": "1.4.28",

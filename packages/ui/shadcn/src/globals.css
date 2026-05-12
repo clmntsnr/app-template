@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Tailwind v4 ignores node_modules by default, so workspace-linked package
+   sources have to be registered explicitly. Without this, classes used only
+   inside shadcn components (bg-card, rounded-lg, bg-primary, …) never make
+   it into the consuming app's generated CSS. */
+@source "./**/*.{ts,tsx}";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

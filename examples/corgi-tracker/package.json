@@ -1,0 +1,51 @@
+{
+  "name": "example-corgi-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests",
+    "cap:sync": "bun run build && cap sync",
+    "cap:ios": "bun run build && cap sync ios && cap open ios",
+    "cap:android": "bun run build && cap sync android && cap open android",
+    "cap:run:ios": "bun run build && cap run ios",
+    "cap:run:android": "bun run build && cap run android"
+  },
+  "dependencies": {
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tanstack/react-query": "catalog:tanstack",
+    "@tanstack/react-query-devtools": "catalog:tanstack",
+    "@tanstack/react-db": "catalog:tanstack",
+    "@tanstack/db": "catalog:tanstack",
+    "@tanstack/query-db-collection": "catalog:tanstack",
+    "@tanstack/react-form": "catalog:tanstack",
+    "@package-ui/shadcn": "workspace:*",
+    "@capacitor/core": "catalog:native",
+    "@capacitor/ios": "catalog:native",
+    "@capacitor/android": "catalog:native",
+    "date-fns": "^4.1.0",
+    "recharts": "2.15.4",
+    "lucide-react": "catalog:icons"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "@tanstack/router-plugin": "catalog:tanstack",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "@vitejs/plugin-react": "catalog:build",
+    "@capacitor/cli": "catalog:native",
+    "tailwindcss": "catalog:styling",
+    "@tailwindcss/vite": "catalog:styling",
+    "tw-animate-css": "catalog:styling",
+    "typescript": "catalog:build",
+    "vite": "catalog:build"
+  }
+}

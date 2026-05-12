@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Corgi Tracker</string>
+    <string name="title_activity_main">Corgi Tracker</string>
+    <string name="package_name">xyz.merkl.corgitracker</string>
+    <string name="custom_url_scheme">xyz.merkl.corgitracker</string>
+</resources>
