@@ -10,11 +10,45 @@
 // mutation code path in TanStack DB is the same one you'd hit against a real
 // backend.
 
-import type { QueryClient } from "@tanstack/react-query";
 import { queryCollectionOptions } from "@tanstack/query-db-collection";
 import { createCollection } from "@tanstack/react-db";
+import type { QueryClient } from "@tanstack/react-query";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
+
+export type Sex = "male" | "female" | "unknown";
+
+export type MealSlot = {
+  // Local time "HH:mm". The slot id (for keys + dedup) is this string —
+  // there's no reason to keep two slots at the exact same minute.
+  time: string;
+  // Owner-defined title or recipe note. Free-form, optional. Surfaces on
+  // the home page next to the time and as a default `notes` value when
+  // logging the meal via the one-click button.
+  label: string;
+};
+
+// Two ways to schedule an outside trip:
+//   - "fixed":     happens at an absolute time of day (e.g., 08:30 walk).
+//   - "afterMeal": happens N minutes after each meal slot (potty break).
+//                  Computed per-meal-slot at render time, so adding/removing
+//                  meals automatically adds/removes the matching trips.
+export type OutsideSlot =
+  | {
+      kind: "fixed";
+      // Local "HH:mm". Doubles as the slot key.
+      time: string;
+      label: string;
+      // Estimated duration; controls the ghost span's width on the timeline.
+      durationMin: number;
+    }
+  | {
+      kind: "afterMeal";
+      // Minutes after each meal slot to schedule the trip.
+      offsetMin: number;
+      label: string;
+      durationMin: number;
+    };
 
 export type CorgiProfile = {
   // Single-row "table" — we always use id = 1. Modeled as a collection
@@ -23,10 +57,29 @@ export type CorgiProfile = {
   name: string;
   // ISO date string (YYYY-MM-DD) — birthdates don't need timezone precision.
   birthDate: string;
-  // Daily meal schedule as "HH:mm" strings (local time). The Today view
-  // shows each slot and offers a one-click "log at scheduled time" button.
-  // Defaults to breakfast + dinner; user can edit on /profile.
-  mealSchedule: string[];
+  // Daily meal schedule. Each slot has a time ("HH:mm" local) and an
+  // optional owner-defined label ("Breakfast", "Half kibble / half wet",
+  // etc.). The home page renders each slot and offers a one-click "log at
+  // scheduled time" button until eaten.
+  mealSchedule: MealSlot[];
+  // Planned outside trips. Mix and match fixed-time walks with after-meal
+  // potty breaks. The home page renders ghost spans for upcoming slots and
+  // a card with one-click "log at HH:mm" buttons.
+  outsideSchedule: OutsideSlot[];
+  // ── Characteristics ──────────────────────────────────────────────────────
+  // Avatar shown on the hero. Plain emoji string keeps storage trivial and
+  // lets us swap to <img src={avatarUrl}> later by adding a sibling field.
+  avatar: string;
+  breed: string;
+  sex: Sex;
+  // Weight in kilograms. `null` when unknown so the input can stay blank
+  // instead of forcing a placeholder zero.
+  weightKg: number | null;
+  // Free-form coat description ("red & white", "tricolor", etc.) — too
+  // open-ended to enumerate well.
+  color: string;
+  // Notes the owner wants surfaced (allergies, vet, microchip ID, quirks).
+  notes: string;
 };
 
 // Two shapes of event share one row:
@@ -39,16 +92,9 @@ export type CorgiProfile = {
 // chronological view and the edit form has one code path.
 export type EventKind = "nap" | "outside" | "poop" | "pee" | "meal";
 
-export const EVENT_KINDS: readonly EventKind[] = [
-  "nap",
-  "outside",
-  "poop",
-  "pee",
-  "meal",
-] as const;
+export const EVENT_KINDS: readonly EventKind[] = ["nap", "outside", "poop", "pee", "meal"] as const;
 
-export const hasDuration = (kind: EventKind) =>
-  kind === "nap" || kind === "outside";
+export const hasDuration = (kind: EventKind) => kind === "nap" || kind === "outside";
 
 // One place to keep label + color so every visualization (timeline, charts,
 // list rows) renders the same identity for each event kind. Colors are
@@ -103,7 +149,20 @@ const defaultProfile: CorgiProfile = {
   // Roughly two years old at the time of writing — easy to overwrite
   // from the /profile screen.
   birthDate: "2024-03-15",
-  mealSchedule: ["08:00", "18:00"],
+  mealSchedule: [
+    { time: "08:00", label: "Breakfast" },
+    { time: "18:00", label: "Dinner" },
+  ],
+  outsideSchedule: [
+    { kind: "afterMeal", offsetMin: 15, label: "Potty break", durationMin: 10 },
+    { kind: "fixed", time: "12:30", label: "Midday walk", durationMin: 30 },
+  ],
+  avatar: "🐕",
+  breed: "Pembroke Welsh Corgi",
+  sex: "unknown",
+  weightKg: null,
+  color: "",
+  notes: "",
 };
 
 // Simulated network latency. Makes the optimistic-update behavior visible
@@ -116,8 +175,14 @@ export const profileApi = {
     // Merge with defaults — older localStorage rows may predate fields like
     // `mealSchedule`. Spread order: stored values win, but missing keys fall
     // back to defaults instead of becoming `undefined`.
-    const stored = read<Partial<CorgiProfile>>(PROFILE_KEY, {});
-    return { ...defaultProfile, ...stored, id: 1 };
+    const stored = read<Partial<CorgiProfile> & { mealSchedule?: unknown }>(PROFILE_KEY, {});
+    // Migrate the old `mealSchedule: string[]` shape (just HH:mm strings) to
+    // the new `MealSlot[]` shape. Keeps existing data usable without a wipe.
+    const rawSchedule = stored.mealSchedule;
+    const mealSchedule: MealSlot[] = Array.isArray(rawSchedule)
+      ? rawSchedule.map((s) => (typeof s === "string" ? { time: s, label: "" } : (s as MealSlot)))
+      : defaultProfile.mealSchedule;
+    return { ...defaultProfile, ...stored, mealSchedule, id: 1 };
   },
   update: async (profile: CorgiProfile) => {
     await delay(80);

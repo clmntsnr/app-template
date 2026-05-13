@@ -16,10 +16,14 @@ function RootComponent() {
       <header className="border-b">
         <nav className="mx-auto flex max-w-4xl items-center gap-4 p-4">
           <span className="mr-2 text-xl">🐕</span>
-          <Link to="/today" className="font-semibold [&.active]:underline">
-            Today
+          <Link
+            to="/"
+            className="font-semibold [&.active]:underline"
+            activeOptions={{ exact: true }}
+          >
+            Home
           </Link>
-          <Link to="/" className="font-semibold [&.active]:underline" activeOptions={{ exact: true }}>
+          <Link to="/trends" className="font-semibold [&.active]:underline">
             Trends
           </Link>
           <Link to="/log" className="font-semibold [&.active]:underline">

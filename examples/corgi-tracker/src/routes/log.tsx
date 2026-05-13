@@ -9,8 +9,6 @@
 // The dialog (components/event-dialog.tsx) handles both insert and update;
 // the row's pencil icon reopens it for any past event.
 
-import { useLiveQuery } from "@tanstack/react-db";
-import { createFileRoute } from "@tanstack/react-router";
 import { Button } from "@package-ui/shadcn/components/button";
 import {
   Card,
@@ -19,29 +17,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@package-ui/shadcn/components/card";
+import { useLiveQuery } from "@tanstack/react-db";
+import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
-import {
-  Cookie,
-  Dog,
-  Droplet,
-  Moon,
-  Pencil,
-  Plus,
-  Trash2,
-  TreePine,
-} from "lucide-react";
-import { useState, useMemo } from "react";
-import {
-  EventDialog,
-  type EventDialogTarget,
-} from "../components/event-dialog";
-import {
-  type CorgiEvent,
-  type EventKind,
-  KIND_LABELS,
-  eventsCollection,
-  hasDuration,
-} from "../db";
+import { Cookie, Dog, Droplet, Moon, Pencil, Plus, Trash2, TreePine } from "lucide-react";
+import { useMemo, useState } from "react";
+import { EventDialog, type EventDialogTarget } from "../components/event-dialog";
+import { type CorgiEvent, type EventKind, eventsCollection, hasDuration, KIND_LABELS } from "../db";
 
 export const Route = createFileRoute("/log")({
   component: LogComponent,
@@ -101,8 +83,8 @@ function LogComponent() {
         <CardHeader>
           <CardTitle>Quick log</CardTitle>
           <CardDescription>
-            Poop / pee / meal log right now in one tap. Naps and outside trips
-            open the entry dialog so you can fill in the start and end times.
+            Poop / pee / meal log right now in one tap. Naps and outside trips open the entry dialog
+            so you can fill in the start and end times.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
@@ -133,8 +115,7 @@ function LogComponent() {
         <CardHeader>
           <CardTitle>Recent events</CardTitle>
           <CardDescription>
-            Most recent first. Use the pencil to edit a time or add notes after
-            the fact.
+            Most recent first. Use the pencil to edit a time or add notes after the fact.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -153,22 +134,16 @@ function LogComponent() {
                 return (
                   <li key={e.id} className="flex items-center gap-3 py-3 text-sm">
                     <Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    <span className="w-16 shrink-0 font-medium">
-                      {KIND_LABELS[e.type]}
-                    </span>
+                    <span className="w-16 shrink-0 font-medium">{KIND_LABELS[e.type]}</span>
                     <span className="flex-1 text-muted-foreground">
                       {format(e.startedAt, "EEE MMM d, HH:mm")}
                       {hasDuration(e.type) && (
                         <>
                           {" — "}
-                          {durationMin !== null
-                            ? `${durationMin} min`
-                            : "no end time"}
+                          {durationMin !== null ? `${durationMin} min` : "no end time"}
                         </>
                       )}
-                      {e.notes ? (
-                        <span className="ml-2 italic">"{e.notes}"</span>
-                      ) : null}
+                      {e.notes ? <span className="ml-2 italic">"{e.notes}"</span> : null}
                     </span>
                     <Button
                       size="sm"
@@ -200,11 +175,7 @@ function LogComponent() {
       <EventDialog
         // Remount when the target changes so the form's local state resets
         // cleanly to the new entry's values. Cheaper than syncing via effects.
-        key={
-          editing === "new"
-            ? `new-${seedKind ?? "any"}`
-            : (editing?.id ?? "closed")
-        }
+        key={editing === "new" ? `new-${seedKind ?? "any"}` : (editing?.id ?? "closed")}
         target={editing}
         seed={seedKind ? { type: seedKind } : undefined}
         onClose={() => setEditing(null)}

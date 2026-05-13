@@ -1,0 +1,39 @@
+{
+  "name": "example-tanstack-spa",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit",
+    "test": "bun test --pass-with-no-tests"
+  },
+  "dependencies": {
+    "react": "catalog:react",
+    "react-dom": "catalog:react",
+    "@tanstack/react-router": "catalog:tanstack",
+    "@tanstack/react-router-devtools": "catalog:tanstack",
+    "@tanstack/react-query": "catalog:tanstack",
+    "@tanstack/react-query-devtools": "catalog:tanstack",
+    "@tanstack/react-db": "catalog:tanstack",
+    "@tanstack/db": "catalog:tanstack",
+    "@tanstack/query-db-collection": "catalog:tanstack",
+    "@package-ui/shadcn": "workspace:*"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "@tanstack/router-plugin": "catalog:tanstack",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "@vitejs/plugin-react": "catalog:build",
+    "react-grab": "0.1.33",
+    "tailwindcss": "catalog:styling",
+    "@tailwindcss/vite": "catalog:styling",
+    "tw-animate-css": "catalog:styling",
+    "typescript": "catalog:build",
+    "vite": "catalog:build"
+  }
+}

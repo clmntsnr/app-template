@@ -1,4 +1,4 @@
-// Shared add/edit dialog. Used by /log (any event) and /today (click a
+// Shared add/edit dialog. Used by /log (any event) and / (click a
 // span/dot on the timeline). Caller controls `target`:
 //   - null     → dialog closed
 //   - "new"    → blank form, "Add entry"
@@ -17,7 +17,6 @@
 //     month grid plus a time field — visually consistent with the rest of
 //     the dialog and theme-aware.
 
-import { useForm } from "@tanstack/react-form";
 import { Button } from "@package-ui/shadcn/components/button";
 import { Calendar } from "@package-ui/shadcn/components/calendar";
 import {
@@ -30,11 +29,7 @@ import {
 } from "@package-ui/shadcn/components/dialog";
 import { Input } from "@package-ui/shadcn/components/input";
 import { Label } from "@package-ui/shadcn/components/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@package-ui/shadcn/components/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@package-ui/shadcn/components/popover";
 import {
   Select,
   SelectContent,
@@ -43,15 +38,10 @@ import {
   SelectValue,
 } from "@package-ui/shadcn/components/select";
 import { Textarea } from "@package-ui/shadcn/components/textarea";
+import { useForm } from "@tanstack/react-form";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
-import {
-  type CorgiEvent,
-  type EventKind,
-  EVENT_KINDS,
-  KIND_LABELS,
-  hasDuration,
-} from "../db";
+import { type CorgiEvent, EVENT_KINDS, type EventKind, hasDuration, KIND_LABELS } from "../db";
 
 export type EventDialogTarget = CorgiEvent | "new" | null;
 
@@ -123,9 +113,7 @@ export function EventDialog({
         <DialogHeader>
           <DialogTitle>{isNew ? "Add entry" : "Edit entry"}</DialogTitle>
           <DialogDescription>
-            {isNew
-              ? "Log an event — from now or from earlier."
-              : "Adjust time, type, or notes."}
+            {isNew ? "Log an event — from now or from earlier." : "Adjust time, type, or notes."}
           </DialogDescription>
         </DialogHeader>
 
@@ -273,12 +261,11 @@ function DateTimePicker({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="w-full justify-start font-normal"
-        >
+        <Button variant="outline" className="w-full justify-start font-normal">
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {value ? format(value, "EEE MMM d, HH:mm") : (
+          {value ? (
+            format(value, "EEE MMM d, HH:mm")
+          ) : (
             <span className="text-muted-foreground">{placeholder}</span>
           )}
         </Button>
