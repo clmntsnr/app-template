@@ -1,0 +1,29 @@
+{
+  "name": "@package-diagrams/nodes",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "biome check src",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@xyflow/react": "catalog:diagrams",
+    "lucide-react": "catalog:icons",
+    "clsx": "catalog:styling",
+    "tailwind-merge": "catalog:styling"
+  },
+  "peerDependencies": {
+    "react": "catalog:react",
+    "react-dom": "catalog:react"
+  },
+  "devDependencies": {
+    "@package-config/typescript": "workspace:*",
+    "@types/react": "catalog:react",
+    "@types/react-dom": "catalog:react",
+    "typescript": "catalog:build"
+  }
+}

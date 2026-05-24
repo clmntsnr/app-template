@@ -1,0 +1,68 @@
+/* Per-node-type accent retinting.
+   Rebinds the `--accent-*` scale inside a subtree carrying `data-kind="…"`.
+   `--primary`, `--ring`, `--accent`, `--accent-foreground` all resolve from
+   these, so the same utility classes (bg-primary, ring-ring, …) recolor
+   automatically. Use `data-kind` on any wrapper, not just nodes. */
+
+[data-kind="source"] {
+  --accent-1: var(--amber-1);
+  --accent-2: var(--amber-2);
+  --accent-3: var(--amber-3);
+  --accent-4: var(--amber-4);
+  --accent-5: var(--amber-5);
+  --accent-6: var(--amber-6);
+  --accent-7: var(--amber-7);
+  --accent-8: var(--amber-8);
+  --accent-9: var(--amber-9);
+  --accent-10: var(--amber-10);
+  --accent-11: var(--amber-11);
+  --accent-12: var(--amber-12);
+  /* Amber-9 is a yellow; pair the solid bg with a dark foreground so
+     `bg-primary text-primary-foreground` stays legible. */
+  --primary-foreground: var(--neutral-12);
+}
+
+[data-kind="operation"] {
+  --accent-1: var(--blue-1);
+  --accent-2: var(--blue-2);
+  --accent-3: var(--blue-3);
+  --accent-4: var(--blue-4);
+  --accent-5: var(--blue-5);
+  --accent-6: var(--blue-6);
+  --accent-7: var(--blue-7);
+  --accent-8: var(--blue-8);
+  --accent-9: var(--blue-9);
+  --accent-10: var(--blue-10);
+  --accent-11: var(--blue-11);
+  --accent-12: var(--blue-12);
+}
+
+[data-kind="signal"] {
+  --accent-1: var(--violet-1);
+  --accent-2: var(--violet-2);
+  --accent-3: var(--violet-3);
+  --accent-4: var(--violet-4);
+  --accent-5: var(--violet-5);
+  --accent-6: var(--violet-6);
+  --accent-7: var(--violet-7);
+  --accent-8: var(--violet-8);
+  --accent-9: var(--violet-9);
+  --accent-10: var(--violet-10);
+  --accent-11: var(--violet-11);
+  --accent-12: var(--violet-12);
+}
+
+[data-kind="sink"] {
+  --accent-1: var(--green-1);
+  --accent-2: var(--green-2);
+  --accent-3: var(--green-3);
+  --accent-4: var(--green-4);
+  --accent-5: var(--green-5);
+  --accent-6: var(--green-6);
+  --accent-7: var(--green-7);
+  --accent-8: var(--green-8);
+  --accent-9: var(--green-9);
+  --accent-10: var(--green-10);
+  --accent-11: var(--green-11);
+  --accent-12: var(--green-12);
+}

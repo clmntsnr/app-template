@@ -1,6 +1,53 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Radix Colors — raw 12-step scales (light) and their dark companions.
+   Each *.css file scopes `:root, .light, .light-theme`; each *-dark.css
+   scopes `.dark, .dark-theme`. We treat them as the only source of truth
+   for color values; everything below resolves to a step on these ramps. */
+@import "@radix-ui/colors/slate.css";
+@import "@radix-ui/colors/slate-alpha.css";
+@import "@radix-ui/colors/slate-dark.css";
+@import "@radix-ui/colors/slate-dark-alpha.css";
+@import "@radix-ui/colors/red.css";
+@import "@radix-ui/colors/red-dark.css";
+@import "@radix-ui/colors/amber.css";
+@import "@radix-ui/colors/amber-dark.css";
+@import "@radix-ui/colors/green.css";
+@import "@radix-ui/colors/green-dark.css";
+@import "@radix-ui/colors/blue.css";
+@import "@radix-ui/colors/blue-dark.css";
+@import "@radix-ui/colors/violet.css";
+@import "@radix-ui/colors/violet-dark.css";
+@import "@radix-ui/colors/iris.css";
+@import "@radix-ui/colors/iris-dark.css";
+@import "@radix-ui/colors/pink.css";
+@import "@radix-ui/colors/pink-dark.css";
+@import "@radix-ui/colors/cyan.css";
+@import "@radix-ui/colors/cyan-dark.css";
+/* Extra neutrals + hues used by named themes (see themes.css). */
+@import "@radix-ui/colors/mauve.css";
+@import "@radix-ui/colors/mauve-dark.css";
+@import "@radix-ui/colors/sage.css";
+@import "@radix-ui/colors/sage-dark.css";
+@import "@radix-ui/colors/sand.css";
+@import "@radix-ui/colors/sand-dark.css";
+@import "@radix-ui/colors/grass.css";
+@import "@radix-ui/colors/grass-dark.css";
+@import "@radix-ui/colors/gold.css";
+@import "@radix-ui/colors/gold-dark.css";
+
+/* Whole-app themes (rebind --neutral-* AND --accent-*). Applied via
+   `data-theme="…"` on <html>. Defaults to "slate" if no attribute is set. */
+@import "./themes.css";
+
+/* Per-subtree retinting (e.g. [data-kind="source"]). Rebinds `--accent-*`
+   so the same `bg-primary` / `border-ring` / `text-accent-foreground`
+   utilities recolor without touching the component. Loaded after themes
+   so node retinting wins over the active theme's accent at the subtree
+   it applies to (it's an attribute selector with descendant scope). */
+@import "./node-themes.css";
+
 /* Tailwind v4 ignores node_modules by default, so workspace-linked package
    sources have to be registered explicitly. Without this, classes used only
    inside shadcn components (bg-card, rounded-lg, bg-primary, …) never make
@@ -9,35 +56,124 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+/* ─── Tailwind theme bindings ─────────────────────────────────────────
+   Critical: utilities map *directly* to the alias scales (--neutral-N,
+   --accent-N) and to status hue scales, NOT through an intermediate
+   semantic role token like `--primary`. The reason is the
+   `var() in custom property` eager-resolution behavior:
 
-  --color-sidebar: hsl(var(--sidebar-background));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
+       :root { --primary: var(--accent-9); }
+
+   …computes `--primary` AT :root, and descendants inherit the resolved
+   color. Sub-tree overrides of `--accent-9` (via [data-kind=…]) never
+   reach `--primary`. By having `bg-primary` compile to
+   `background-color: var(--accent-9)`, substitution happens at the use
+   site instead — so [data-theme=…] and [data-kind=…] both work.
+
+   The `inline` keyword is what makes Tailwind emit
+   `var(--accent-9)` at every utility call site rather than introducing
+   another `:root { --color-primary: var(--accent-9); }` indirection
+   (which would re-introduce the bug). */
+@theme inline {
+  /* Surfaces (neutral-derived) */
+  --color-background: var(--neutral-1);
+  --color-foreground: var(--neutral-12);
+  --color-foreground-subtle: var(--neutral-11);
+  --color-card: var(--neutral-1);
+  --color-card-hover: var(--neutral-2);
+  --color-card-foreground: var(--neutral-12);
+  --color-popover: var(--neutral-1);
+  --color-popover-foreground: var(--neutral-12);
+  --color-muted: var(--neutral-3);
+  --color-muted-hover: var(--neutral-4);
+  --color-muted-foreground: var(--neutral-11);
+  --color-secondary: var(--neutral-3);
+  --color-secondary-hover: var(--neutral-4);
+  --color-secondary-foreground: var(--neutral-12);
+  --color-border: var(--neutral-6);
+  --color-border-strong: var(--neutral-8);
+  --color-border-subtle: var(--neutral-5);
+  --color-input: var(--neutral-7);
+  --color-placeholder: var(--neutral-9);
+
+  /* Accent-derived (retints per [data-theme] and [data-kind]) */
+  --color-primary: var(--accent-9);
+  --color-primary-hover: var(--accent-10);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent-3);
+  --color-accent-hover: var(--accent-4);
+  --color-accent-foreground: var(--accent-12);
+  --color-ring: var(--accent-8);
+  --color-link: var(--accent-11);
+  --color-link-hover: var(--accent-12);
+
+  /* Status — destructive */
+  --color-destructive: var(--red-9);
+  --color-destructive-hover: var(--red-10);
+  --color-destructive-foreground: var(--neutral-1);
+  --color-destructive-soft: var(--red-3);
+  --color-destructive-soft-foreground: var(--red-11);
+  /* Status — warning */
+  --color-warning: var(--amber-9);
+  --color-warning-hover: var(--amber-10);
+  --color-warning-foreground: var(--neutral-12);
+  --color-warning-soft: var(--amber-3);
+  --color-warning-soft-foreground: var(--amber-11);
+  /* Status — success */
+  --color-success: var(--green-9);
+  --color-success-hover: var(--green-10);
+  --color-success-foreground: var(--neutral-1);
+  --color-success-soft: var(--green-3);
+  --color-success-soft-foreground: var(--green-11);
+  /* Status — info */
+  --color-info: var(--blue-9);
+  --color-info-hover: var(--blue-10);
+  --color-info-foreground: var(--neutral-1);
+  --color-info-soft: var(--blue-3);
+  --color-info-soft-foreground: var(--blue-11);
+
+  /* Overlays — dimming scrims behind modals. Kept dark in both modes
+     (industry convention; light scrims hide depth). */
+  --color-overlay: var(--overlay);
+
+  /* Sidebar — aliased to the same semantic tokens as the rest of the UI.
+     Kept under separate utility names so the sidebar primitive (which
+     pre-dated this design system) keeps compiling. If a real sidebar
+     palette is ever needed, override these aliases inside [data-sidebar]. */
+  --color-sidebar: var(--neutral-2);
+  --color-sidebar-foreground: var(--neutral-12);
+  --color-sidebar-primary: var(--accent-9);
+  --color-sidebar-primary-foreground: var(--primary-foreground);
+  --color-sidebar-accent: var(--neutral-3);
+  --color-sidebar-accent-foreground: var(--neutral-12);
+  --color-sidebar-border: var(--neutral-6);
+  --color-sidebar-ring: var(--accent-8);
+
+  /* Direct scale steps — escape hatches for fine-grained control. */
+  --color-neutral-1: var(--neutral-1);
+  --color-neutral-2: var(--neutral-2);
+  --color-neutral-3: var(--neutral-3);
+  --color-neutral-4: var(--neutral-4);
+  --color-neutral-5: var(--neutral-5);
+  --color-neutral-6: var(--neutral-6);
+  --color-neutral-7: var(--neutral-7);
+  --color-neutral-8: var(--neutral-8);
+  --color-neutral-9: var(--neutral-9);
+  --color-neutral-10: var(--neutral-10);
+  --color-neutral-11: var(--neutral-11);
+  --color-neutral-12: var(--neutral-12);
+  --color-accent-1: var(--accent-1);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-accent-4: var(--accent-4);
+  --color-accent-5: var(--accent-5);
+  --color-accent-6: var(--accent-6);
+  --color-accent-7: var(--accent-7);
+  --color-accent-8: var(--accent-8);
+  --color-accent-9: var(--accent-9);
+  --color-accent-10: var(--accent-10);
+  --color-accent-11: var(--accent-11);
+  --color-accent-12: var(--accent-12);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -46,71 +182,68 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
+    /* Neutral alias — points at slate by default. Radix's slate-dark.css
+       automatically swaps `--slate-N` under `.dark`, so the alias inherits
+       dark values for free. */
+    --neutral-1: var(--slate-1);
+    --neutral-2: var(--slate-2);
+    --neutral-3: var(--slate-3);
+    --neutral-4: var(--slate-4);
+    --neutral-5: var(--slate-5);
+    --neutral-6: var(--slate-6);
+    --neutral-7: var(--slate-7);
+    --neutral-8: var(--slate-8);
+    --neutral-9: var(--slate-9);
+    --neutral-10: var(--slate-10);
+    --neutral-11: var(--slate-11);
+    --neutral-12: var(--slate-12);
+    --neutral-a1: var(--slate-a1);
+    --neutral-a2: var(--slate-a2);
+    --neutral-a3: var(--slate-a3);
 
-@layer base {
+    /* Accent alias — defaults to neutral (high-contrast monochrome).
+       Themes (themes.css) and per-kind blocks (node-themes.css) rebind
+       these to a colored Radix scale. */
+    --accent-1: var(--neutral-1);
+    --accent-2: var(--neutral-2);
+    --accent-3: var(--neutral-3);
+    --accent-4: var(--neutral-4);
+    --accent-5: var(--neutral-5);
+    --accent-6: var(--neutral-6);
+    --accent-7: var(--neutral-7);
+    --accent-8: var(--neutral-8);
+    --accent-9: var(--neutral-12);
+    --accent-10: var(--neutral-11);
+    --accent-11: var(--neutral-12);
+    --accent-12: var(--neutral-12);
+
+    /* The only "role" token kept in :root: --primary-foreground. It is
+       set directly (not via var() in another scope) inside themes and
+       per-kind blocks where a light accent needs dark on-solid text. */
+    --primary-foreground: var(--neutral-1);
+
+    /* Modal scrim — fixed dark with built-in alpha. Stays dark in
+       dark mode (a light scrim over dark UI would erase depth). */
+    --overlay: oklch(0% 0 0 / 0.6);
+
+    --radius: 0.5rem;
+  }
+
+  /* Edge cases that need a different value under `.dark`. Currently none —
+     Radix's dark scales handle everything else automatically. Listed for
+     future overrides. */
+
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--neutral-1);
+    color: var(--neutral-12);
+  }
+  /* Text selection paints with the active accent at low alpha so it tints
+     to the current theme/kind context. */
+  ::selection {
+    background-color: var(--accent-4);
+    color: var(--accent-12);
   }
 }
